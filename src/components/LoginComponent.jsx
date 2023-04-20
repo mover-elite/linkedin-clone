@@ -1,17 +1,29 @@
-import React from "react";
-import { useState } from "react";
-import { LoginApi, RegisterApi } from "../api/AuthApi";
+import React, { useState } from "react";
+import { LoginAPI } from "../api/AuthAPI";
+import LinkedinLogo from "../assets/linkedinLogo.png";
+import { useNavigate } from "react-router-dom";
 import "../Sass/LoginComponent.scss";
+import { toast } from "react-toastify";
 
-export const LoginComponent = () => {
+export default function LoginComponent() {
+  let navigate = useNavigate();
   const [credentails, setCredentials] = useState({});
-
   const login = async () => {
-    let res = await LoginApi(credentails.email, credentails.password);
-    console.log(res);
+    try {
+      let res = await LoginAPI(credentails.email, credentails.password);
+      toast.success("Signed In to Linkedin!");
+      localStorage.setItem("userEmail", res.user.email);
+      navigate("/home");
+    } catch (err) {
+      console.log(err);
+      toast.error("Please Check your Credentials");
+    }
   };
+
   return (
     <div className="login-wrapper">
+      <img src={LinkedinLogo} className="linkedinLogo" />
+
       <div className="login-wrapper-inner">
         <h1 className="heading">Sign in</h1>
         <p className="sub-heading">Stay updated on your professional world</p>
@@ -49,4 +61,4 @@ export const LoginComponent = () => {
       </div>
     </div>
   );
-};
+}
